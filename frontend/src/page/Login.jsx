@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator"
 import { useNavigate } from "react-router";
 import { login } from "../api/login";
+import { useContext } from "react";
+import AuthContext from "../context/Authcontext";
 
 export default function Login() {
     const [form, setForm] = useState({ email: "", password: "" });
@@ -13,6 +15,8 @@ export default function Login() {
     const [error, setError] = useState(null);
 
     const navigate = useNavigate();
+
+    const { setUser } = useContext(AuthContext);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -30,6 +34,8 @@ export default function Login() {
             return;
         }
         console.log("Login successful:", res);
+        setUser(res.user);
+        setError(null);
         // Redirect to home page or dashboard after successful login
         navigate("/");
         // Reset loading state after a short delay to show the success message

@@ -15,7 +15,7 @@ export const createRepairRequest = async (req, res) => {
         if (result.success) {
             const servicer = await User.find({ role: 'servicer' });
             if (servicer) {
-                // Prepare email data
+                // Prepare email data for each servicer
                 servicer.forEach(serv => {
                     const emailData = {
                         to: serv.email,
@@ -30,6 +30,7 @@ export const createRepairRequest = async (req, res) => {
                             <p><strong>Date of Purchase:</strong> ${dop}</p>
                             <p><strong>Fault Description:</strong> ${fault_description}</p>
                             <p><strong>Request ID:</strong> ${requestId}</p>
+                            <a href="${process.env.FRONTEND_URL}/track-request?requestId=${requestId}">View Request</a>
                             <p>Please review the request and take necessary actions.</p>
                             <img src="${image_url}" alt="Product Image" style="max-width: 300px; max-height: 300px;"/></p>
                             <br>
@@ -42,6 +43,34 @@ export const createRepairRequest = async (req, res) => {
                     // Add email to the queue
                     addEmailToQueue(emailData);
                 })
+            }
+            const user = await User.findById(req.user.id);
+            if (user) {
+                // Prepare email data for user
+                const userEmailData = {
+                    to: user.email,
+                    subject: 'Repair Request Confirmation',
+                    html: `
+                        <h1>Repair Request Confirmation</h1>
+                        <p>Your repair request has been successfully created with the following details:</p>
+                        <p><strong>Name:</strong> ${name}</p>
+                        <p><strong>Serial No:</strong> ${serialno}</p>
+                        <p><strong>Product Model:</strong> ${product_model}</p>
+                        <p><strong>Product Details:</strong> ${product_details}</p>
+                        <p><strong>Date of Purchase:</strong> ${dop}</p>
+                        <p><strong>Fault Description:</strong> ${fault_description}</p>
+                        <p><strong>Request ID:</strong> ${requestId}</p>
+                        <a href="${process.env.FRONTEND_URL}/track-request?requestId=${requestId}">Track Your Request</a>
+                        <p>We will notify you once your request is reviewed.</p>
+                        <img src="${image_url}" alt="Product Image" style="max-width: 300px; max-height: 300px;"/></p>
+                        <br>
+                        <b>Thank you!</b>
+                        <p>Best regards,</p>
+                        <p>A1ElectroRepair Team</p>
+                    `
+                };
+                // Add user email to the queue
+                addEmailToQueue(userEmailData);
             }
             return res.status(HTTP_STATUS_CODES.CREATED).json({
                 success: true,

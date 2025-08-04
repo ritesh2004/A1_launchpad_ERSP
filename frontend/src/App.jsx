@@ -8,6 +8,9 @@ import Login from './page/Login'
 import Signup from './page/Signup'
 import AuthContext from './context/Authcontext'
 import { getProfile } from './api/getprofile'
+import SubmitRequest from './page/Submit'
+import Success from './page/Success'
+import TrackReq from './page/TrackReq'
 
 function App() {
   const { user, setUser } = useContext(AuthContext);
@@ -28,15 +31,16 @@ function App() {
   },[])
 
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/submit-request" element={<SubmitRequest />} />
+        <Route path="/track-request" element={<TrackReq />} />
+        <Route path="/success" element={<Success />} />
       </Routes>
     </BrowserRouter>
-  </>
   )
 }
 

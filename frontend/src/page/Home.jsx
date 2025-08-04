@@ -1,11 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight,SearchIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import AuthContext from "../context/Authcontext";
+import { Input } from "@/components/ui/input";
 
 const HomePage = () => {
+  const [requestId, setRequestId] = useState("");
+
   const navigate = useNavigate();
 
   const { user } = useContext(AuthContext);
@@ -19,11 +22,11 @@ const HomePage = () => {
           Submit service requests, track repair status, and get support for your electronic products.
         </p>
         <div className="flex flex-wrap gap-4 justify-center">
-          <Button>Submit Request</Button>
+          <Button onClick={() => navigate("/submit-request")}>Submit Request</Button>
           <Button variant="outline">Track Request</Button>
           {user ? (
-            <Button variant="ghost"  className="flex items-center">
-                @{user?.name}
+            <Button variant="ghost" className="flex items-center">
+              @{user?.name}
             </Button>
           ) : (
             <Button variant="ghost" onClick={() => navigate("/login")} className="flex items-center">
@@ -31,6 +34,14 @@ const HomePage = () => {
             </Button>
           )}
         </div>
+      </div>
+
+      {/* Search a request by ID */}
+      <div className="flex w-full max-w-sm items-center gap-2 mx-auto">
+        <Input type="text" placeholder="Request ID" value={requestId} onChange={(e) => setRequestId(e.target.value)} />
+        <Button type="submit" variant="outline" onClick={() => navigate(`/track-request?requestId=${requestId}`)}>
+          <SearchIcon className="w-4 h-4" />
+        </Button>
       </div>
 
       {/* Info Cards */}
